@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tech Layoffs Tracker</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns@3.0.0/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
+</head>
+<body>
+    <header class="app-header">
+        <div class="header-content">
+            <h1>Tech Layoffs Tracker</h1>
+            <p class="subtitle">An interactive visualization of layoff events at major tech companies.</p>
+        </div>
+        <button id="theme-toggle" aria-label="Toggle dark mode">
+            <svg class="sun-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+            <svg class="moon-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+        </button>
+    </header>
+
+    <main class="app-main">
+        <div class="controls-panel">
+            <div class="control-group">
+                <label>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                    Time Range:
+                </label>
+                <div class="date-range-filter">
+                    <button id="date-from-btn" class="date-btn">Jan 2015</button>
+                    <span>to</span>
+                    <button id="date-to-btn" class="date-btn">Dec 2025</button>
+                </div>
+            </div>
+            <div class="control-group">
+                 <label>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+                    Analysis:
+                </label>
+                <button id="trend-toggle" class="control-toggle">
+                    <span class="toggle-text">Show Trend</span>
+                </button>
+            </div>
+        </div>
+
+        <div id="company-filter-container" class="company-filter-controls">
+             <!-- Company filter buttons will be generated here -->
+        </div>
+
+        <section class="chart-container">
+            <canvas id="layoffsChart"></canvas>
+        </section>
+
+        <section id="trend-methodology-card" class="info-card hidden">
+            <h3>Trend Analysis Methodology</h3>
+            <p>The predictive trend line is generated using <strong>Linear Regression</strong> on the historical data points for each visible company. It projects a potential future trend for the next 6 months based on past events. This is a simplified statistical model and should not be considered a financial forecast.</p>
+        </section>
+        
+        <section id="stats-container" class="stats-grid">
+             <!-- Statistics cards will be generated here -->
+        </section>
+    </main>
+
+    <!-- Custom Tooltip Element -->
+    <div id="custom-tooltip" class="chart-tooltip hidden">
+        <div class="tooltip-header">
+            <strong id="tooltip-company"></strong>
+            <span id="tooltip-date"></span>
+        </div>
+        <div class="tooltip-body">
+            <p><strong id="tooltip-layoffs"></strong> employees affected.</p>
+            <p id="tooltip-overview" class="tooltip-overview-text"></p>
+        </div>
+        <div id="tooltip-stock-section" class="tooltip-stock-info hidden">
+            <div class="stock-price">
+                <span>Layoff Day Close:</span>
+                <strong id="stock-price-on-day">$0.00</strong>
+            </div>
+            <div class="stock-change">
+                <span id="stock-change-percent" class="stock-up">
+                    <svg class="stock-icon-up hidden" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="19" x2="12" y2="5"></line><polyline points="5 12 12 5 19 12"></polyline></svg>
+                    <svg class="stock-icon-down hidden" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><polyline points="19 12 12 19 5 12"></polyline></svg>
+                    <span id="stock-change-value">+0.00%</span>
+                </span>
+                <span id="stock-change-period" class="stock-change-period"></span>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Custom Calendar Popup -->
+    <div id="calendar-popup" class="calendar-container hidden">
+        <div class="calendar-header">
+            <button id="prev-month-btn"><</button>
+            <span id="month-year-display"></span>
+            <button id="next-month-btn">></button>
+        </div>
+        <div class="calendar-grid">
+            <!-- Calendar days will be generated here -->
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
