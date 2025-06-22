@@ -1,0 +1,215 @@
+/* --- Global Styles & Theming --- */
+:root {
+    --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    --font-mono: "SF Mono", "Menlo", "Monaco", "Consolas", "Liberation Mono", "Courier New", monospace;
+    
+    /* Light Theme */
+    --bg-color: #ffffff;
+    --bg-alt: #f9fafb;
+    --text-primary: #111827;
+    --text-secondary: #6b7280;
+    --border-color: #e5e7eb;
+    --accent-color-active: #3b82f6;
+    --control-bg: #f3f4f6;
+    --control-bg-hover: #e5e7eb;
+    --tooltip-bg: rgba(255, 255, 255, 0.9);
+    --shadow-color: rgba(0, 0, 0, 0.1);
+    --stock-up-color: #16a34a;
+    --stock-down-color: #dc2626;
+
+    /* Company Colors */
+    --color-google: #EA4335;
+    --color-amazon: #FF9900;
+    --color-apple: #8E8E93;
+    --color-meta: #1877F2;
+    --color-microsoft: #FFB900;
+    --color-nvidia: #76B900;
+}
+
+[data-theme="dark"] {
+    --bg-color: #1F2937;
+    --bg-alt: #111827;
+    --text-primary: #f9fafb;
+    --text-secondary: #9ca3af;
+    --border-color: #374151;
+    --accent-color-active: #60a5fa;
+    --control-bg: #374151;
+    --control-bg-hover: #4b5563;
+    --tooltip-bg: rgba(31, 41, 55, 0.9);
+    --shadow-color: rgba(0, 0, 0, 0.3);
+    --stock-up-color: #4ade80;
+    --stock-down-color: #f87171;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+.hidden { display: none !important; }
+
+html, body {
+    font-family: var(--font-sans);
+    background-color: var(--bg-color);
+    color: var(--text-primary);
+    transition: background-color 0.3s, color 0.3s;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* --- Layout & Header --- */
+.app-header, .app-main {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 1.5rem 2rem;
+}
+.app-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 1.5rem;
+}
+.app-header h1 { font-size: 1.75rem; font-weight: 600; margin-bottom: 0.25rem; }
+.app-header .subtitle { color: var(--text-secondary); font-size: 1rem; }
+
+#theme-toggle {
+    background: none; border: none; cursor: pointer; color: var(--text-secondary);
+    padding: 0.5rem; border-radius: 50%; display: flex; align-items: center;
+    justify-content: center; flex-shrink: 0; margin-left: 1rem;
+}
+#theme-toggle:hover { background-color: var(--control-bg); color: var(--text-primary); }
+[data-theme="light"] .moon-icon { display: none; }
+[data-theme="dark"] .sun-icon { display: none; }
+
+/* --- Controls Panel --- */
+.controls-panel {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    justify-content: center;
+    align-items: center;
+    margin-top: 1.5rem;
+    padding: 1rem;
+    background-color: var(--bg-alt);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+}
+.control-group { display: flex; align-items: center; gap: 0.75rem; }
+.control-group label { display: flex; align-items: center; gap: 0.5rem; color: var(--text-secondary); font-weight: 500; }
+.date-range-filter { display: flex; align-items: center; gap: 0.5rem; }
+.date-range-filter span { color: var(--text-secondary); }
+.date-btn, .control-toggle {
+    font-family: var(--font-mono);
+    font-size: 0.875rem;
+    padding: 0.5rem 1rem;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    background-color: var(--bg-color);
+    color: var(--text-primary);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+.date-btn:hover, .control-toggle:hover { background-color: var(--control-bg-hover); border-color: var(--accent-color-active); }
+.control-toggle.active { background-color: var(--accent-color-active); color: white; border-color: var(--accent-color-active); }
+
+/* --- Company Filters --- */
+.company-filter-controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    justify-content: center;
+    margin: 2.5rem 0;
+}
+.filter-btn {
+    display: flex; align-items: center; gap: 0.5rem;
+    font-size: 0.875rem; font-weight: 500; padding: 0.5rem 1rem;
+    border: none; border-radius: 20px;
+    background-color: var(--control-bg); color: var(--text-secondary);
+    cursor: pointer; transition: all 0.2s ease; user-select: none;
+}
+.filter-btn:hover { opacity: 0.8; }
+.filter-btn.active { color: white; font-weight: 600; }
+.filter-btn.active[data-company="Alphabet"] { background-color: var(--color-google); }
+.filter-btn.active[data-company="Amazon"] { background-color: var(--color-amazon); }
+.filter-btn.active[data-company="Apple"] { background-color: var(--color-apple); }
+.filter-btn.active[data-company="Meta"] { background-color: var(--color-meta); }
+.filter-btn.active[data-company="Microsoft"] { background-color: var(--color-microsoft); }
+.filter-btn.active[data-company="NVIDIA"] { background-color: var(--color-nvidia); }
+.filter-btn .icon { stroke-width: 2.5; }
+
+/* --- Chart & Tooltip --- */
+.chart-container { position: relative; height: 55vh; min-height: 450px; max-height: 600px; margin-bottom: 2.5rem; }
+.chart-tooltip {
+    position: fixed;
+    pointer-events: none;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    box-shadow: 0 4px 12px var(--shadow-color);
+    background: var(--tooltip-bg);
+    padding: 1rem;
+    width: 300px;
+    z-index: 100;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
+.tooltip-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; padding-bottom: 0.5rem; border-bottom: 1px solid var(--border-color); }
+#tooltip-company { font-weight: 600; font-size: 1rem; }
+#tooltip-date { font-family: var(--font-mono); font-size: 0.875rem; color: var(--text-secondary); }
+.tooltip-body p { margin: 0.5rem 0; line-height: 1.5; }
+#tooltip-layoffs { font-family: var(--font-mono); }
+.tooltip-overview-text { color: var(--text-secondary); font-size: 0.9rem; max-height: 100px; overflow-y: auto; }
+
+/* Tooltip Stock Section */
+.tooltip-stock-info {
+    margin-top: 0.75rem; padding-top: 0.75rem;
+    border-top: 1px solid var(--border-color); font-size: 0.875rem;
+}
+.stock-price, .stock-change { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.25rem; }
+.stock-price strong, #stock-change-value { font-family: var(--font-mono); font-weight: 600; }
+#stock-change-percent { display: flex; align-items: center; gap: 0.25rem; font-weight: 600; }
+.stock-change-period { color: var(--text-secondary); }
+.stock-up { color: var(--stock-up-color); }
+.stock-down { color: var(--stock-down-color); }
+
+/* --- Info & Stats Cards --- */
+.info-card { background-color: var(--bg-alt); border: 1px solid var(--border-color); border-radius: 12px; padding: 1.5rem; margin: 0 auto 2.5rem auto; max-width: 800px; }
+.info-card h3 { margin-bottom: 0.75rem; }
+.info-card p { color: var(--text-secondary); line-height: 1.6; }
+.stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; }
+.stat-card { background-color: var(--bg-alt); border-left: 4px solid; border-radius: 8px; padding: 1.5rem; transition: all 0.2s ease; }
+.stat-card:hover { transform: translateY(-3px); box-shadow: 0 4px 12px var(--shadow-color); }
+.stat-card .company-name { font-size: 1.125rem; font-weight: 600; margin-bottom: 0.5rem; }
+.stat-card .total-layoffs { font-family: var(--font-mono); font-size: 1.75rem; font-weight: 700; }
+.stat-card .layoff-count { color: var(--text-secondary); font-size: 0.875rem; }
+[data-company="Alphabet"] .stat-card { border-color: var(--color-google); }
+[data-company="Amazon"] .stat-card { border-color: var(--color-amazon); }
+[data-company="Apple"] .stat-card { border-color: var(--color-apple); }
+[data-company="Meta"] .stat-card { border-color: var(--color-meta); }
+[data-company="Microsoft"] .stat-card { border-color: var(--color-microsoft); }
+[data-company="NVIDIA"] .stat-card { border-color: var(--color-nvidia); }
+
+/* Custom Calendar */
+.calendar-container { position: absolute; z-index: 101; width: 300px; background-color: var(--bg-color); border: 1px solid var(--border-color); border-radius: 8px; box-shadow: 0 8px 24px var(--shadow-color); padding: 1rem; }
+.calendar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
+.calendar-header button { background: none; border: none; font-size: 1.25rem; cursor: pointer; color: var(--text-primary); padding: 0.25rem 0.5rem; border-radius: 4px; }
+.calendar-header button:hover { background-color: var(--control-bg); }
+.calendar-header span { font-weight: 600; }
+.calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
+.calendar-grid > div { display: flex; justify-content: center; align-items: center; height: 32px; font-size: 0.875rem; border-radius: 4px; }
+.calendar-day-header { font-weight: 600; color: var(--text-secondary); }
+.calendar-day { cursor: pointer; }
+.calendar-day:hover { background-color: var(--control-bg-hover); }
+.calendar-day.selected { background-color: var(--accent-color-active); color: white; }
+.calendar-day.empty { cursor: default; }
+
+/* --- Responsiveness --- */
+@media (max-width: 768px) {
+    .app-header, .app-main { padding: 1.5rem 1rem; }
+    .app-header { flex-direction: column; align-items: flex-start; gap: 0.5rem; }
+    .app-header h1 { font-size: 1.5rem; }
+    .app-header .subtitle { font-size: 0.9rem; }
+    #theme-toggle { position: absolute; top: 1.25rem; right: 0.5rem; }
+    .controls-panel { flex-direction: column; align-items: stretch; gap: 1rem; }
+    .chart-container { height: 50vh; min-height: 400px; }
+    .chart-tooltip { width: 280px; }
+}
